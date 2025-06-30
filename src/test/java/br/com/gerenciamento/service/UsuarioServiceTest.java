@@ -2,6 +2,7 @@ package br.com.gerenciamento.service;
 
 import br.com.gerenciamento.exception.EmailExistsException;
 import br.com.gerenciamento.model.Usuario;
+import br.com.gerenciamento.util.Util;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -55,8 +55,10 @@ public class UsuarioServiceTest {
         usuario.setUser("Cassio");
         serviceUsuario.salvarUsuario(usuario);
 
-        Usuario usuarioRetorno = serviceUsuario.loginUser("Cassio","1234");
-        usuario.equals(usuarioRetorno);
+        Usuario usuarioRetorno = serviceUsuario.loginUser("Cassio", Util.md5("1234"));
+        assertEquals(usuarioRetorno.getEmail(), usuario.getEmail());
+        assertEquals(usuarioRetorno.getSenha(), usuario.getSenha());
+
     }
     @Test
     public void logarUsuarioErrado() throws Exception {
@@ -66,7 +68,7 @@ public class UsuarioServiceTest {
         usuario.setUser("Joao");
         serviceUsuario.salvarUsuario(usuario);
 
-       assertNull(serviceUsuario.loginUser("Paulo","9834"));
+       assertNull(serviceUsuario.loginUser("Paulo",Util.md5("9834")));
     }
 
 }
